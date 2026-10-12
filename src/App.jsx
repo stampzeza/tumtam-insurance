@@ -15,9 +15,11 @@ function App() {
   const [successMsg, setSuccessMsg] = useState('');
   const [showImageModal, setShowImageModal] = useState(false);
   const [copied, setCopied] = useState(false);
+  const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
   useEffect(() => {
-    axios.get('http://localhost:8080/api/plans')
+    
+    axios.get(`${apiUrl}/api/plans`)
       .then(response => {
         const fetchedPlans = response.data || [];
         setPlans(fetchedPlans);
@@ -78,7 +80,7 @@ function App() {
         sessionStorage.setItem(viewedKey, 'true');
         
         // ยิง API ไปบอก Backend ว่าเพิ่มยอดวิว 1 ครั้ง
-        axios.post(`http://localhost:8080/api/plans/${plan.id}/view`)
+        axios.post(`${apiUrl}/api/plans/${plan.id}/view`)
           .catch(err => console.error("Error updating view count", err));
       }
 
@@ -115,7 +117,7 @@ function App() {
       date_of_birth: formData.date_of_birth
     };
 
-    axios.post('http://localhost:8080/api/leads', payload)
+    axios.post(`${apiUrl}/api/leads`, payload)
       .then(() => {
         setSubmitting(false);
         setSuccessMsg('ส่งข้อมูลสำเร็จ! เจ้าหน้าที่ได้รับข้อมูลเรียบร้อยแล้ว จะรีบติดต่อกลับโดยเร็วที่สุดครับ');
