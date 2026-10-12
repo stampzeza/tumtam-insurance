@@ -57,7 +57,7 @@ function App() {
       setMetaTag('og:title', 'ตูมตาม ประกันออนไลน์ | ตัวแทนประกันชีวิต อลิอันซ์ อยุธยา');
       setMetaTag('og:description', 'เลือกแผนประกันภัยที่ใช่สำหรับคุณและคนที่คุณรัก ดูแลโดยตัวแทนมืออาชีพ');
     }
-  };
+  }; 
 
   const setMetaTag = (nameOrProperty, content) => {
     let element = document.querySelector(`meta[name="${nameOrProperty}"]`) || document.querySelector(`meta[property="${nameOrProperty}"]`);
