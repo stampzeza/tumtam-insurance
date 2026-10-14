@@ -12,9 +12,7 @@
         {
           "type": "header",
           "key": "user-agent",
-          "value": {
-            "re": "(facebookexternalhit|Facebot|Twitterbot|LinkedInBot|Slackbot|WhatsApp|TelegramBot|Discordbot|Line/)"
-          }
+          "value": "(?i)(facebookexternalhit|facebot|twitterbot|linkedinbot|slackbot|whatsapp|telegrambot|discordbot|line/)"
         }
       ],
       "destination": "/api/og"
