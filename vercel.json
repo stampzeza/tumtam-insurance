@@ -3,18 +3,18 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     {
-      "source": "/",
+      "source": "/((?!api/).*)",
       "has": [
         {
           "type": "query",
           "key": "slug"
         },
         {
-            "type": "header",
-            "key": "user-agent",
-            "value": {
-                "re": "facebookexternalhit|Facebot|Twitterbot|LinkedInBot|Slackbot|WhatsApp|TelegramBot|Discordbot|Line/"
-            }
+          "type": "header",
+          "key": "user-agent",
+          "value": {
+            "re": "facebookexternalhit|Facebot|Twitterbot|LinkedInBot|Slackbot|WhatsApp|TelegramBot|Discordbot|Line/"
+          }
         }
       ],
       "destination": "/api/og"
