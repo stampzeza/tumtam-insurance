@@ -3,6 +3,8 @@ import axios from 'axios';
 import { Shield, Phone, MessageSquare, CheckCircle, User, Calendar, X, ArrowLeft, Table, Filter, ZoomIn, Share2, Copy, Check } from 'lucide-react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 
+import Login from './Login';                           
+import ProtectedRoute from './ProtectedRoute';       
 import AdminPlans from './admin/AdminPlans';
 import AdminDashboard from './admin/AdminDashboard';
 
@@ -396,12 +398,15 @@ function MainStore() {
 // ไฟล์ App หลัก ทำหน้าที่ควบคุมเส้นทาง (Router) ทั้งหมด
 export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<MainStore />} />
-        <Route path="/admin/plans" element={<AdminPlans />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-      </Routes>
-    </Router>
+    <BrowserRouter>
+      <Router>
+        <Routes>
+          <Route path="/" element={<MainStore />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/admin/plans" element={<AdminPlans />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        </Routes>
+      </Router>
+    </BrowserRouter>
   );
 }
