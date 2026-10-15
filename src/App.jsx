@@ -398,7 +398,6 @@ function MainStore() {
 // ไฟล์ App หลัก ทำหน้าที่ควบคุมเส้นทาง (Router) ทั้งหมด
 export default function App() {
   return (
-    <BrowserRouter>
       <Router>
         <Routes>
           <Route path="/" element={<MainStore />} />
@@ -407,6 +406,5 @@ export default function App() {
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
         </Routes>
       </Router>
-    </BrowserRouter>
   );
 }
