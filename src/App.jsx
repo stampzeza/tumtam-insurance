@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Shield, Phone, MessageSquare, CheckCircle, User, Calendar, X, ArrowLeft, Table, Filter, ZoomIn, Share2, Copy, Check } from 'lucide-react';
 
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home'; // หรือหน้าแรกของคุณ
+
+import AdminPlans from './admin/AdminPlans';
+
+import AdminDashboard from './admin/AdminDashboard';
+
 function App() {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -133,7 +140,25 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex flex-col justify-between font-sans">
       <div className="max-w-6xl mx-auto px-4 py-10 w-full flex-grow">
-        
+        <Router>
+
+          <Routes>
+
+            {/* หน้าแรกของเว็บไซต์ */}
+
+            <Route path="/" element={<Home />} />
+
+            
+
+            {/* เพิ่มเส้นทางสำหรับเข้าหน้า Admin */}
+
+            <Route path="/admin/plans" element={<AdminPlans />} />
+
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+          </Routes>
+
+        </Router>
         <header className="text-center mb-10">
           <div className="inline-flex items-center justify-center bg-blue-600 text-white p-3 rounded-full shadow-lg mb-4 cursor-pointer" onClick={() => handleSelectPlan(null)}>
             <Shield className="w-8 h-8" />
