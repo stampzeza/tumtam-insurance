@@ -12,7 +12,7 @@ export default function Login() {
     setError('');
 
     // ใส่ URL ของ Backend Go คุณแบบตรงๆ ไปก่อนเลย (เช่นพอร์ต 8080 หรือ URL บน Render)
-    const backendUrl = 'http://localhost:8080'; // <-- ถ้าอยู่บนคลาวด์ ให้เปลี่ยนเป็น URL ของ Render คุณ
+    const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'; // <-- ถ้าอยู่บนคลาวด์ ให้เปลี่ยนเป็น URL ของ Render คุณ
 
     try {
       const response = await fetch(`${backendUrl}/api/login`, {
