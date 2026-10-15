@@ -11,29 +11,28 @@ export default function Login() {
     e.preventDefault();
     setError('');
 
+    // ใส่ URL ของ Backend Go คุณแบบตรงๆ ไปก่อนเลย (เช่นพอร์ต 8080 หรือ URL บน Render)
+    const backendUrl = 'http://localhost:8080'; // <-- ถ้าอยู่บนคลาวด์ ให้เปลี่ยนเป็น URL ของ Render คุณ
+
     try {
-      // 1. ส่ง Username และ Password ไปที่ Backend ของ Go
-      const response = await fetch('/api/login', {
-        method: 'POST',
+      const response = await fetch(`${backendUrl}/api/login`, {
+        method: 'POST', // บังคับ POST ชัดเจน
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       });
 
-      const data = await response.json();
+      const text = await response.text();
+      const data = text ? JSON.parse(text) : {};
 
       if (!response.ok) {
         throw new Error(data.error || 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
       }
 
-      // 2. ถ้าเข้าสู่ระบบสำเร็จ ระบบจะส่ง Token (กุญแจ) กลับมา 
-      // เราจะเก็บบันทึกกุญแจนี้ไว้ในเครื่อง (LocalStorage)
       localStorage.setItem('admin_token', data.token);
-
-      // 3. พาเด้งไปที่หน้าจัดการแผนประกันทันที
       navigate('/admin/plans');
 
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'เกิดข้อผิดพลาดในการเชื่อมต่อ');
     }
   };
 
