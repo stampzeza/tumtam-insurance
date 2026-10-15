@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Shield, Phone, MessageSquare, CheckCircle, User, Calendar, X, ArrowLeft, Table, Filter, ZoomIn, Share2, Copy, Check } from 'lucide-react';
-
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home'; // หรือหน้าแรกของคุณ
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 
 import AdminPlans from './admin/AdminPlans';
-
 import AdminDashboard from './admin/AdminDashboard';
 
-function App() {
+// คอมโพเนนต์หน้าหลักของเว็บไซต์ (แยกออกมาจาก App หลักเพื่อให้ Router ทำงานถูกต้อง)
+function MainStore() {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('ทั้งหมด');
@@ -25,7 +23,6 @@ function App() {
   const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
   useEffect(() => {
-    
     axios.get(`${apiUrl}/api/plans`)
       .then(response => {
         const fetchedPlans = response.data || [];
@@ -48,7 +45,6 @@ function App() {
       });
   }, []);
 
-  // ฟังก์ชันอัปเดต SEO Title และ Meta Tags แบบ Dynamic บนหน้าเว็บ
   const updatePageMeta = (plan) => {
     if (plan) {
       document.title = `${plan.title} | ตูมตาม ประกันออนไลน์`;
@@ -81,16 +77,12 @@ function App() {
       const newUrl = `${window.location.pathname}?slug=${plan.slug}`;
       window.history.pushState({ path: newUrl }, '', newUrl);
 
-      // 💡 เช็ค SessionStorage ว่าเคยนับวิวแผนนี้ในรอบนี้ยัง (ป้องกันกด F5 แล้วปั่นวิว)
       const viewedKey = `viewed_plan_${plan.id}`;
       if (!sessionStorage.getItem(viewedKey)) {
         sessionStorage.setItem(viewedKey, 'true');
-        
-        // ยิง API ไปบอก Backend ว่าเพิ่มยอดวิว 1 ครั้ง
         axios.post(`${apiUrl}/api/plans/${plan.id}/view`)
           .catch(err => console.error("Error updating view count", err));
       }
-
     } else {
       const newUrl = window.location.pathname;
       window.history.pushState({ path: newUrl }, '', newUrl);
@@ -140,25 +132,6 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex flex-col justify-between font-sans">
       <div className="max-w-6xl mx-auto px-4 py-10 w-full flex-grow">
-        <Router>
-
-          <Routes>
-
-            {/* หน้าแรกของเว็บไซต์ */}
-
-            <Route path="/" element={<Home />} />
-
-            
-
-            {/* เพิ่มเส้นทางสำหรับเข้าหน้า Admin */}
-
-            <Route path="/admin/plans" element={<AdminPlans />} />
-
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-
-          </Routes>
-
-        </Router>
         <header className="text-center mb-10">
           <div className="inline-flex items-center justify-center bg-blue-600 text-white p-3 rounded-full shadow-lg mb-4 cursor-pointer" onClick={() => handleSelectPlan(null)}>
             <Shield className="w-8 h-8" />
@@ -381,7 +354,7 @@ function App() {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1 flex items-center gap-1"><Phone className="w-3.5 h-3.5 text-blue-600" /> เบอร์โทรศัพท์</label>
-                    <input type="tel" required value={formData.phone_number} onChange={e => setFormData({...formData, phone_number: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="เช่น 0812345678" />
+                    <input type="tel" required value={formData.phone_number} onChange={e => setFormData({...formData, phone_number: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="เช่น **********" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1 flex items-center gap-1"><MessageSquare className="w-3.5 h-3.5 text-blue-600" /> Line ID (ถ้ามี)</label>
@@ -410,7 +383,7 @@ function App() {
           <p className="text-sm text-slate-400 font-medium">ตัวแทนประกันชีวิต อลิอันซ์ อยุธยา</p>
           <div className="flex flex-wrap justify-center items-center gap-4 text-sm pt-2">
             <span className="bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 text-slate-300">เลขที่ใบอนุญาต: <strong className="text-white">6901030636</strong></span>
-            <a href="tel:0812345678" className="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-700 text-slate-300 transition flex items-center gap-1.5"><Phone className="w-4 h-4 text-emerald-400" /> โทร: ติดต่อตัวแทน</a>
+            <a href="tel:**********" className="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-700 text-slate-300 transition flex items-center gap-1.5"><Phone className="w-4 h-4 text-emerald-400" /> โทร: ติดต่อตัวแทน</a>
             <a href="https://lin.ee/vaJWG63" target="_blank" rel="noopener noreferrer" className="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg transition font-medium flex items-center gap-1.5"><MessageSquare className="w-4 h-4" /> Line OA: แอดไลน์คุยกับเรา</a>
           </div>
           <div className="border-t border-slate-800 pt-6 mt-6 text-xs text-slate-500">© {new Date().getFullYear()} Tumtam Insurance Online. All rights reserved.</div>
@@ -420,4 +393,15 @@ function App() {
   );
 }
 
-export default App;
+// ไฟล์ App หลัก ทำหน้าที่ควบคุมเส้นทาง (Router) ทั้งหมด
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<MainStore />} />
+        <Route path="/admin/plans" element={<AdminPlans />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      </Routes>
+    </Router>
+  );
+}
