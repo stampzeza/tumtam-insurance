@@ -396,14 +396,31 @@ function MainStore() {
 }
 
 // ไฟล์ App หลัก ทำหน้าที่ควบคุมเส้นทาง (Router) ทั้งหมด
+// ไฟล์ App หลัก ทำหน้าที่ควบคุมเส้นทาง (Router) ทั้งหมด
 export default function App() {
   return (
       <Router>
         <Routes>
           <Route path="/" element={<MainStore />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/admin/plans" element={<AdminPlans />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          
+          {/* เอา ProtectedRoute มาครอบหน้าแอดมิน เพื่อบังคับเช็คกุญแจ (Token) */}
+          <Route 
+            path="/admin/plans" 
+            element={
+              <ProtectedRoute>
+                <AdminPlans />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/dashboard" 
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } 
+          />
         </Routes>
       </Router>
   );
