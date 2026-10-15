@@ -58,13 +58,14 @@ export default function AdminPlans() {
     setCurrentPlan(plan);
     setShowModal(true);
 
-    // ดึงข้อมูลเรทเบี้ยประกันจาก API (ซึ่งควรส่งเรทที่ผูกกับ plan.id กลับมาด้วย)
-    axios.get(`${apiUrl}/api/plans/${plan.id}`)
+    // ดึงเรทเบี้ยจาก API รวม (หรือถ้าตัว plan มีเรทเบี้ยติดมาด้วยอยู่แล้ว ให้เอามาใช้เลย)
+    // หรือถ้า Backend มีการเก็บเรทแยก ให้ยิงไปดึง หรือถ้าตอนนี้ยังไม่มี API แยก ใช้ข้อมูลจำลอง/ค่าว่างไปก่อนเพื่อไม่ให้ติด 404
+    axios.get(`${apiUrl}/api/plans`)
       .then(res => {
-        // รองรับทั้งกรณี backend ส่งมาเป็น { ...plan, rates: [...] } หรือ { rates: [...] }
-        const planData = res.data;
-        const fetchedRates = planData.rates || res.data.rates || [];
-        // Map ข้อมูลให้มั่นใจว่ามี plan_id ครบถ้วน
+        const allPlans = res.data || [];
+        const found = allPlans.find(p => p.id === plan.id);
+        const fetchedRates = found?.rates || plan.rates || [];
+        
         setRates(fetchedRates.map(r => ({
           plan_id: plan.id,
           min_age: r.min_age ?? '',
@@ -74,7 +75,7 @@ export default function AdminPlans() {
         })));
       })
       .catch(err => {
-        console.error('Error fetching plan rates:', err);
+        console.error('Error fetching rates:', err);
         setRates([]);
       });
   };
