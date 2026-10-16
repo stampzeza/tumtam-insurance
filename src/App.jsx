@@ -8,7 +8,7 @@ import ProtectedRoute from './ProtectedRoute';
 import AdminPlans from './admin/AdminPlans';
 import AdminDashboard from './admin/AdminDashboard';
 import RegisterSelection from './api/register/RegisterSelection';
-import Register from './api/register/Register';
+import RegisterForm from './api/register/RegisterForm';
 
 
 // คอมโพเนนต์หน้าหลักของเว็บไซต์ (แยกออกมาจาก App หลักเพื่อให้ Router ทำงานถูกต้อง)
@@ -424,15 +424,8 @@ export default function App() {
               </ProtectedRoute>
             } 
           />
-           {/* หน้าแรกให้เลือกประเภท */}
-          <Route 
-            path="/register-select"
-            element={<RegisterSelection />} />
-
-          {/* หน้าฟอร์มกรอกข้อมูล */}
-          <Route 
-            path="/register" 
-            element={<Register />} />
+          <Route path="/register-select" element={<RegisterSelection />} />
+          <Route path="/register" element={<RegisterForm />} />
 
         </Routes>
       </Router>
