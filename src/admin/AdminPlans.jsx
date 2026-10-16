@@ -108,9 +108,19 @@ export default function AdminPlans() {
     setRates(updated);
   };
 
+  
   const handleSavePlan = (e) => {
     e.preventDefault();
-    // ผูก plan_id ให้กับทุกเรทเบี้ยก่อนส่งข้อมูลบันทึก
+
+    // อ่าน Token ที่บันทึกไว้หลัง Login
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      alert('ไม่พบ Token กรุณาเข้าสู่ระบบใหม่');
+      return;
+    }
+
+    // เตรียมข้อมูลเรทเบี้ย
     const payloadRates = rates.map(r => ({
       ...r,
       plan_id: currentPlan.id
@@ -121,9 +131,25 @@ export default function AdminPlans() {
       rates: payloadRates
     };
 
+    // ส่ง Token ไปกับ Request ทุกครั้ง
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    };
+
     const request = isEditing
-      ? axios.put(`${apiUrl}/api/plans/${currentPlan.id}`, payload)
-      : axios.post(`${apiUrl}/api/plans`, payload);
+      ? axios.put(
+          `${apiUrl}/api/plans/${currentPlan.id}`,
+          payload,
+          config
+        )
+      : axios.post(
+          `${apiUrl}/api/plans`,
+          payload,
+          config
+        );
 
     request
       .then(() => {
@@ -132,9 +158,17 @@ export default function AdminPlans() {
         fetchPlans();
       })
       .catch(err => {
-        alert('เกิดข้อผิดพลาดในการบันทึก: ' + (err.response?.data?.message || err.message));
+        console.error('Save plan error:', err.response?.data || err);
+
+        const message =
+          err.response?.data?.error ||
+          err.response?.data?.message ||
+          err.message;
+
+        alert('เกิดข้อผิดพลาดในการบันทึก: ' + message);
       });
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6 md:p-10 font-sans">
