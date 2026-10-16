@@ -7,8 +7,8 @@ import Login from './Login';
 import ProtectedRoute from './ProtectedRoute';       
 import AdminPlans from './admin/AdminPlans';
 import AdminDashboard from './admin/AdminDashboard';
-import RegisterSelection from './RegisterSelection'; // หรือสร้างคอมโพเนนต์ด้านล่างนี้ได้เลย
-import Register from './Register';
+import RegisterSelection from './api/register/RegisterSelection';
+import Register from './api/register/Register';
 
 
 // คอมโพเนนต์หน้าหลักของเว็บไซต์ (แยกออกมาจาก App หลักเพื่อให้ Router ทำงานถูกต้อง)
