@@ -113,7 +113,7 @@ export default function AdminPlans() {
     e.preventDefault();
 
     // อ่าน Token ที่บันทึกไว้หลัง Login
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('admin_token');
 
     if (!token) {
       alert('ไม่พบ Token กรุณาเข้าสู่ระบบใหม่');
