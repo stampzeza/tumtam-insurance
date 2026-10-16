@@ -421,6 +421,16 @@ export default function App() {
               </ProtectedRoute>
             } 
           />
+           {/* หน้าแรกให้เลือกประเภท */}
+          <Route 
+            path="/register-select"
+            element={<RegisterSelection />} />
+
+          {/* หน้าฟอร์มกรอกข้อมูล */}
+          <Route 
+            path="/register" 
+            element={<Register />} />
+            
         </Routes>
       </Router>
   );
