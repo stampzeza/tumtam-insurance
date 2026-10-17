@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Plus, Edit, Trash2, ArrowLeft, Save, X, Shield, LogOut} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminPlans() {
+  const navigate = useNavigate();
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   
