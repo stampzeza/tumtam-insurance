@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Plus, Edit, Trash2, ArrowLeft, Save, X, Shield, LogOut } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Plus, Edit, Trash2, ArrowLeft, Save, X, Shield, LogOut} from 'lucide-react';
 
 export default function AdminPlans() {
-  const navigate = useNavigate();
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -118,9 +116,19 @@ export default function AdminPlans() {
     setRates(updated);
   };
 
+  
   const handleSavePlan = (e) => {
     e.preventDefault();
-    // ผูก plan_id ให้กับทุกเรทเบี้ยก่อนส่งข้อมูลบันทึก
+
+    // อ่าน Token ที่บันทึกไว้หลัง Login
+    const token = localStorage.getItem('admin_token');
+
+    if (!token) {
+      alert('ไม่พบ Token กรุณาเข้าสู่ระบบใหม่');
+      return;
+    }
+
+    // เตรียมข้อมูลเรทเบี้ย
     const payloadRates = rates.map(r => ({
       ...r,
       plan_id: currentPlan.id
@@ -131,9 +139,25 @@ export default function AdminPlans() {
       rates: payloadRates
     };
 
+    // ส่ง Token ไปกับ Request ทุกครั้ง
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    };
+
     const request = isEditing
-      ? axios.put(`${apiUrl}/api/plans/${currentPlan.id}`, payload)
-      : axios.post(`${apiUrl}/api/plans`, payload);
+      ? axios.put(
+          `${apiUrl}/api/plans/${currentPlan.id}`,
+          payload,
+          config
+        )
+      : axios.post(
+          `${apiUrl}/api/plans`,
+          payload,
+          config
+        );
 
     request
       .then(() => {
@@ -142,9 +166,17 @@ export default function AdminPlans() {
         fetchPlans();
       })
       .catch(err => {
-        alert('เกิดข้อผิดพลาดในการบันทึก: ' + (err.response?.data?.message || err.message));
+        console.error('Save plan error:', err.response?.data || err);
+
+        const message =
+          err.response?.data?.error ||
+          err.response?.data?.message ||
+          err.message;
+
+        alert('เกิดข้อผิดพลาดในการบันทึก: ' + message);
       });
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6 md:p-10 font-sans">
@@ -159,21 +191,19 @@ export default function AdminPlans() {
             <h1 className="text-2xl font-extrabold text-gray-900">ระบบจัดการแผนประกัน (Admin CMS)</h1>
             <p className="text-sm text-gray-500">จัดการข้อมูลแผนประกันและตารางอัตราเบี้ยประกันภัย</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={handleOpenNew}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl shadow-md transition flex items-center gap-2 whitespace-nowrap"
-            >
-              <Plus className="w-5 h-5" /> เพิ่มแผนใหม่ (New)
-            </button>
-            <button
+          <button 
+            onClick={handleOpenNew}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl shadow-md transition flex items-center gap-2 whitespace-nowrap"
+          >
+            <Plus className="w-5 h-5" /> เพิ่มแผนใหม่ (New)
+          </button>
+          <button
               onClick={handleLogout}
               className="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-semibold px-4 py-2.5 rounded-xl transition flex items-center gap-2 whitespace-nowrap"
               title="ออกจากระบบ"
             >
               <LogOut className="w-5 h-5" /> Logout
             </button>
-          </div>
         </div>
 
         {/* ตารางแสดงรายการ Plan */}
