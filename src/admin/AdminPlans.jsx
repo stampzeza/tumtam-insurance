@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
-import { Plus, Edit, Trash2, ArrowLeft, Save, X, Shield, LogOut} from 'lucide-react';
+import { Plus, Edit, Trash2, ArrowLeft, Save, X, Shield, LogOut, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function AdminPlans() {
   const navigate = useNavigate();
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
   
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -23,6 +24,27 @@ export default function AdminPlans() {
 
   const [rates, setRates] = useState([]);
   const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+
+  // ค้นหาจากทุกคอลัมน์ที่แสดงในตาราง โดยไม่สนตัวพิมพ์เล็ก/ใหญ่
+  const filteredPlans = useMemo(() => {
+    const keyword = searchTerm.trim().toLocaleLowerCase();
+
+    if (!keyword) return plans;
+
+    return plans.filter(plan => {
+      const searchableValues = [
+        plan.title,
+        plan.slug,
+        plan.category,
+        plan.google_drive_file_id,
+        plan.is_active !== false ? 'เปิดใช้งาน active enabled true' : 'ปิดใช้งาน inactive disabled false',
+      ];
+
+      return searchableValues.some(value =>
+        String(value ?? '').toLocaleLowerCase().includes(keyword)
+      );
+    });
+  }, [plans, searchTerm]);
 
   const fetchPlans = () => {
     setLoading(true);
@@ -210,13 +232,41 @@ export default function AdminPlans() {
 
         {/* ตารางแสดงรายการ Plan */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          {/* Search ครอบคลุมทุกคอลัมน์ในตาราง */}
+          <div className="p-4 md:p-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="relative w-full sm:max-w-md">
+              <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="search"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                placeholder="ค้นหาชื่อแผน, Slug, หมวดหมู่, Google Drive ID หรือสถานะ..."
+                aria-label="ค้นหาทุกคอลัมน์ของตารางแผนประกัน"
+                className="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 text-xs font-semibold"
+                  aria-label="ล้างคำค้นหา"
+                >
+                  ล้าง
+                </button>
+              )}
+            </div>
+            <p className="text-sm text-gray-500 whitespace-nowrap">
+              พบ <span className="font-bold text-gray-800">{filteredPlans.length}</span> จาก {plans.length} รายการ
+            </p>
+          </div>
+
           {loading ? (
             <div className="text-center py-20 text-gray-400 font-medium">กำลังโหลดข้อมูล...</div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className={`overflow-x-auto ${filteredPlans.length > 15 ? 'max-h-[900px] overflow-y-auto' : ''}`}>
               <table className="w-full text-left border-collapse whitespace-nowrap">
                 <thead>
-                  <tr className="bg-slate-900 text-white text-xs uppercase tracking-wider">
+                  <tr className="bg-slate-900 text-white text-xs uppercase tracking-wider sticky top-0 z-10">
                     <th className="py-4 px-6">ชื่อแผน (Title)</th>
                     <th className="py-4 px-6">Slug</th>
                     <th className="py-4 px-6">หมวดหมู่</th>
@@ -226,7 +276,7 @@ export default function AdminPlans() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 text-sm">
-                  {plans.map(plan => (
+                  {filteredPlans.map(plan => (
                     <tr key={plan.id} className="hover:bg-slate-50/80 transition">
                       <td className="py-4 px-6 font-bold text-gray-900 max-w-xs truncate">{plan.title}</td>
                       <td className="py-4 px-6 text-gray-600 font-mono text-xs">{plan.slug}</td>
@@ -255,8 +305,14 @@ export default function AdminPlans() {
                       </td>
                     </tr>
                   ))}
-                  {plans.length === 0 && (
-                    <tr><td colSpan="6" className="text-center py-12 text-gray-400">ยังไม่มีข้อมูลแผนประกันในระบบ</td></tr>
+                  {filteredPlans.length === 0 && (
+                    <tr>
+                      <td colSpan="6" className="text-center py-12 text-gray-400">
+                        {plans.length === 0
+                          ? 'ยังไม่มีข้อมูลแผนประกันในระบบ'
+                          : 'ไม่พบข้อมูลที่ตรงกับคำค้นหา ลองใช้คำค้นหาอื่น'}
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </table>
