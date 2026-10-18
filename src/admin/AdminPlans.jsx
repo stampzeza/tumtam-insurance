@@ -263,7 +263,7 @@ export default function AdminPlans() {
           {loading ? (
             <div className="text-center py-20 text-gray-400 font-medium">กำลังโหลดข้อมูล...</div>
           ) : (
-            <div className={`overflow-x-auto ${filteredPlans.length > 15 ? 'max-h-[900px] overflow-y-auto' : ''}`}>
+            <div className={`overflow-x-auto ${filteredPlans.length > 10 ? 'max-h-[900px] overflow-y-auto' : ''}`}>
               <table className="w-full text-left border-collapse whitespace-nowrap">
                 <thead>
                   <tr className="bg-slate-900 text-white text-xs uppercase tracking-wider sticky top-0 z-10">
