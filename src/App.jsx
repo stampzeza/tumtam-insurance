@@ -31,7 +31,11 @@ function MainStore() {
     axios.get(`${apiUrl}/api/plans`)
       .then(response => {
         const fetchedPlans = response.data || [];
-        setPlans(fetchedPlans);
+        setPlans(
+          [...fetchedPlans].sort(
+            (a, b) => (Number(b.view_count) || 0) - (Number(a.view_count) || 0)
+          )
+        );
         
         const params = new URLSearchParams(window.location.search);
         const planSlug = params.get('slug');
