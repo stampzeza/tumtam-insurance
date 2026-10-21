@@ -17,7 +17,8 @@ function MainStore() {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('ทั้งหมด');
   const categories = ['ทั้งหมด', 'มรดก', 'สะสมทรัพย์', 'สุขภาพ', 'ชดเชยรายวัน', 'โรคร้ายแรง', 'มะเร็ง', 'อุบัติเหตุ'];
-  
+  const [searchText, setSearchText] = useState('');
+
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({ full_name: '', phone_number: '', line_id: '', date_of_birth: '' });
@@ -106,13 +107,22 @@ function MainStore() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const filteredPlans = selectedCategory === 'ทั้งหมด' 
-    ? plans 
-    : plans.filter(plan => {
-        if (!plan.category) return false;
-        const planCategories = plan.category.split(',').map(cat => cat.trim());
-        return planCategories.includes(selectedCategory);
-      });
+  const filteredPlans = plans.filter(plan => {
+    // Filter ตามหมวดหมู่เดิม
+    const matchesCategory =
+      selectedCategory === 'ทั้งหมด'
+        ? true
+        : plan.category
+          ? plan.category.split(',').map(cat => cat.trim()).includes(selectedCategory)
+          : false;
+
+    // ค้นหาจากชื่อแผนประกัน
+    const matchesSearch = (plan.title || '')
+      .toLowerCase()
+      .includes(searchText.trim().toLowerCase());
+
+    return matchesCategory && matchesSearch;
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -171,6 +181,17 @@ function MainStore() {
                   {cat}
                 </button>
               ))}
+            </div>
+            <div className="w-full max-w-xl mx-auto mb-8">
+              <input
+                type="text"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                placeholder="ค้นหาแผนประกันที่คุณสนใจ..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl
+                          shadow-sm focus:outline-none focus:ring-2
+                          focus:ring-blue-500 focus:border-blue-500"
+              />
             </div>
 
             {filteredPlans.length === 0 ? (
