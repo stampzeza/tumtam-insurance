@@ -421,7 +421,7 @@ export default function InsuranceApplicationForm({
           <div>
             <p className={labelClass}>ความถี่ในการชำระเบี้ย{requiredMark}</p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {["รายเดือน", "ราย 3 เดือน", "ราย 6 เดือน", "รายปี"].map((value) => (
+              {["รายปี", "ราย 6 เดือน", "ราย 3 เดือน", "รายเดือน"].map((value) => (
                 <button
                   type="button"
                   key={value}
