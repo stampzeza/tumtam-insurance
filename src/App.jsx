@@ -9,6 +9,7 @@ import AdminPlans from './admin/AdminPlans';
 import AdminDashboard from './admin/AdminDashboard';
 import RegisterSelection from './api/register/RegisterSelection';
 import RegisterForm from './api/register/RegisterForm';
+import InsuranceApplicationForm from './components/InsuranceApplicationForm';
 
 
 // คอมโพเนนต์หน้าหลักของเว็บไซต์ (แยกออกมาจาก App หลักเพื่อให้ Router ทำงานถูกต้อง)
@@ -357,50 +358,13 @@ function MainStore() {
         )}
 
         {showModal && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-3xl max-w-md w-full p-8 relative shadow-2xl border border-gray-100">
-              <button onClick={() => setShowModal(false)} className="absolute top-5 right-5 text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition">
-                <X className="w-5 h-5" />
-              </button>
-
-              <div className="mb-6">
-                <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider">แบบฟอร์มสมัครออนไลน์</span>
-                <h3 className="text-xl font-bold text-gray-900 mt-1">{selectedPlan?.title}</h3>
-              </div>
-
-              {successMsg ? (
-                <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-6 rounded-2xl text-center space-y-4">
-                  <CheckCircle className="w-12 h-12 text-emerald-600 mx-auto" />
-                  <p className="font-medium text-sm leading-relaxed">{successMsg}</p>
-                  <button onClick={() => { setShowModal(false); handleSelectPlan(null); }} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl text-sm font-semibold transition">
-                    กลับสู่หน้าหลัก
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1 flex items-center gap-1"><User className="w-3.5 h-3.5 text-blue-600" /> ชื่อ - นามสกุล</label>
-                    <input type="text" required value={formData.full_name} onChange={e => setFormData({...formData, full_name: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="เช่น สมชาย ใจดี" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1 flex items-center gap-1"><Phone className="w-3.5 h-3.5 text-blue-600" /> เบอร์โทรศัพท์</label>
-                    <input type="tel" required value={formData.phone_number} onChange={e => setFormData({...formData, phone_number: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="เช่น **********" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1 flex items-center gap-1"><MessageSquare className="w-3.5 h-3.5 text-blue-600" /> Line ID (ถ้ามี)</label>
-                    <input type="text" value={formData.line_id} onChange={e => setFormData({...formData, line_id: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="เช่น somchai_line" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1 flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-blue-600" /> วันเดือนปีเกิด</label>
-                    <input type="date" required value={formData.date_of_birth} onChange={e => setFormData({...formData, date_of_birth: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600" />
-                  </div>
-                  <button type="submit" disabled={submitting} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 rounded-xl shadow-lg transition duration-200 mt-4 disabled:opacity-50">
-                    {submitting ? 'กำลังส่งข้อมูล...' : 'ยืนยันการสมัครแผนประกัน'}
-                  </button>
-                </form>
-              )}
-            </div>
-          </div>
+          <InsuranceApplicationForm
+            selectedPlan={selectedPlan}
+            apiUrl={apiUrl}
+            successMsg={successMsg}
+            onClose={() => setShowModal(false)}
+            onSuccess={(message) => setSuccessMsg(message)}
+          />
         )}
       </div>
 
